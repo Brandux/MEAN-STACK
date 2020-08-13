@@ -3,25 +3,27 @@
         <div class="col s5">
             <div class="card">
                 <div class="card-content">
-                    <form >
+                    <form  [formGroup]="formEmployee">
                         <input type="hidden" name="_id" >
                         <div class="row">
                           <div class="input-field col-s12">
-                            <input type="text" name="name"  placeholder="Enter your FullName">
+                            <input type="text" name="name" formControlName="name"  placeholder="Enter your FullName">
                           </div>
                           <div class="input-field col-s12">
-                            <input type="text" name="position" placeholder="Enter your Position">
+                            <input type="text" name="position" formControlName="position" placeholder="Enter your Position">
                           </div>
                           <div class="input-field col-s12">
-                            <input type="text" name="office"  placeholder="Enter your Office">
+                            <input type="text" name="office" formControlName="office"  placeholder="Enter your Office">
                           </div>
                           <div class="input-field col-s12">
-                            <input type="text" name="salary"  value="0" placeholder="Enter your Salary">
+                            <input type="number" name="salario" formControlName="salario"  value="0" placeholder="Enter your Salary">
                           </div>
                           <div class="card-action">
                             <div class="input-field col-s12">
-                              <button class="btn right" style="margin-left: 2px;" >Clean</button>
-                              <button class="btn right" (click)="addEmployee()">Save</button>
+                              <button class="btn right"  *ngIf="upd" (click)="cancel()" style="margin-left: 2px;" >Cancelar</button>
+                              <button class="btn right" *ngIf="!upd" (click)="resetForm()" style="margin-left: 2px;" >Clean</button>
+                              <button class="btn right" *ngIf="upd" (click)="update()">Editar</button>
+                              <button class="btn right" *ngIf="!upd" (click)="addEmployee()">Save</button>
                             </div>
                           </div>
                         </div>
@@ -46,7 +48,7 @@
                     <td>{{ employee.position }}</td>
                     <td>{{ employee.office }}</td>
                     <td>
-                      <a (click)="editEmployee(employee)">
+                      <a (click)="editEmployee(employee)"> 
                         <i class="material-icons">edit</i>
                       </a>
                       <a (click)="deleteEmployee(employee._id)">
@@ -60,3 +62,5 @@
     </div>
 
 </div>
+
+<!-- (click)="editEmployee(employee)" -->

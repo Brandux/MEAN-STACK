@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { EmployeeService } from 'src/app/services/employee.service';
+import { Empleyee } from 'src/app/models/empleyee';
 declare var M: any;
 
 @Component({
@@ -13,38 +14,72 @@ declare var M: any;
 })
 export class EmployeesComponent implements OnInit {
   employess: any = [];
-  constructor(private employeeService: EmployeeService) { }
+  _id: any;
+  upd: boolean;
+  public formEmployee: FormGroup;
+
+  constructor(
+    private employeeService: EmployeeService,
+    public formBuilder: FormBuilder,
+  ) { }
 
   ngOnInit(): void {
+    this.builderformServicio();
+    this.upd = false;
     this.getEmpleado();
+  }
+
+  private builderformServicio() {
+    this.formEmployee = this.formBuilder.group({
+      name: ['', Validators.required],
+      position: ['', Validators.required],
+      office: ['', Validators.required],
+      salario: ['0', Validators.required],
+    });
   }
 
   getEmpleado() {
     this.employeeService.getEmployes().subscribe(resp => {
-      console.log(resp);
       this.employess = resp || [];
-
     });
   }
 
-  addEmployee(form?: NgForm) {
-    console.log(form.value);
-    if(form.value._id) {
-      this.employeeService.putEmployee(form.value)
+  addEmployee() {
+    const value = this.formEmployee.value;
+      if(this.formEmployee.valid) {
+        console.log(this.formEmployee.value, value.id != '');
+        this.employeeService.postEmployes(value)
         .subscribe(res => {
-          this.resetForm(form);
           this.getEmpleado();
-          M.toast({html: 'Updated Successfully'});
+          M.toast({html: 'Save successfully'});
+          this.resetForm();
         });
-    } else {
-      this.employeeService.postEmployes(form.value)
-      .subscribe(res => {
-        this.getEmpleado();
-        this.resetForm(form);
-        M.toast({html: 'Save successfully'});
-      });
-    }
-    
+      } else {
+        M.toast({html: 'Procura llenar los campos correctamente'});
+      }
+  }
+
+  editEmployee(employee: Empleyee) {
+    this._id =  employee._id || false,
+    this.formEmployee.patchValue({
+      name: employee.name,
+      position: employee.position,
+      office: employee.office,
+      salario: employee.salario,
+    });
+    const value = this.formEmployee.value;
+    this.upd = true;
+  }
+
+  update() {
+    const value = this.formEmployee.value;
+    console.log(this._id, value);
+    this.employeeService.putEmployee(this._id, value)
+    .subscribe(res => {
+      this.resetForm();
+      this.getEmpleado();
+      M.toast({html: 'Updated Successfully'});
+    });
   }
 
   deleteEmployee(_id: string) {
@@ -57,9 +92,13 @@ export class EmployeesComponent implements OnInit {
     }
   }
 
-  resetForm(form?: NgForm) {
-    if (form) {
-      form.reset();
-    }
+  public resetForm () {
+    this.formEmployee.reset();
+    this.builderformServicio();
+  }
+
+  cancel() {
+    this.upd = false;
+    this.resetForm();
   }
 }

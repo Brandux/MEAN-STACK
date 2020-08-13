@@ -18,8 +18,8 @@ export class EmployeeService {
     return this.http.post(this.URL_API, data);
   }
 
-  putEmployee(data: Empleyee) {
-    return this.http.put(this.URL_API + `/${data._id}`, data);
+  putEmployee(_id: any, data: Empleyee) {
+    return this.http.put(this.URL_API + `/${_id}`, data);
   }
 
   deleteEmployee(_id: string) {

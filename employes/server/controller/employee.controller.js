@@ -33,6 +33,7 @@ employeeController.updateEmployee =  async (req, res) => {
         office: req.body.office,
         salario: req.body.salario
     };
+    console.log(id,employee);
     const updte = await Employee.findOneAndUpdate(id, {$set: employee}, {new: true});
     res.json({
         status: 'ACTUALIZADO',
